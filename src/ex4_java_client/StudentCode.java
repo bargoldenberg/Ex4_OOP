@@ -4,8 +4,22 @@ package src.ex4_java_client; /**
  */
 import java.io.IOException;
 import java.util.Scanner;
+import Graph.MyDWG;
+import Graph.MyDWG_Algo;
+import Graph.fromJsonToGraph;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 public class StudentCode {
+    public static MyDWG_Algo loadjsonstring(String graphstr){
+        MyDWG_Algo g = new MyDWG_Algo();
+        Gson gson = new Gson();
+        fromJsonToGraph graph = gson.fromJson(graphstr, fromJsonToGraph.class);
+        MyDWG gr = new MyDWG(graph);
+        g.init(gr);
+        return g;
+    }
     public static void main(String[] args) {
         Client client = new Client();
         try {
@@ -14,6 +28,7 @@ public class StudentCode {
             e.printStackTrace();
         }
         String graphStr = client.getGraph();
+        MyDWG_Algo g = loadjsonstring(graphStr);
         System.out.println(graphStr);
         client.addAgent("{\"id\":0}");
         String agentsStr = client.getAgents();
