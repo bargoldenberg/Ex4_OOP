@@ -12,14 +12,7 @@ import com.google.gson.GsonBuilder;
 
 
 public class StudentCode {
-    public static MyDWG_Algo loadjsonstring(String graphstr){
-        MyDWG_Algo g = new MyDWG_Algo();
-        Gson gson = new Gson();
-        fromJsonToGraph graph = gson.fromJson(graphstr, fromJsonToGraph.class);
-        MyDWG gr = new MyDWG(graph);
-        g.init(gr);
-        return g;
-    }
+
     public static void main(String[] args) {
         Client client = new Client();
         try {
@@ -28,12 +21,14 @@ public class StudentCode {
             e.printStackTrace();
         }
         String graphStr = client.getGraph();
-        MyDWG_Algo g = loadjsonstring(graphStr);
+        MyDWG_Algo g = new MyDWG_Algo();
+        g.loadjsonstring(graphStr);
         System.out.println(graphStr);
         client.addAgent("{\"id\":0}");
         String agentsStr = client.getAgents();
         System.out.println(agentsStr);
         String pokemonsStr = client.getPokemons();
+        Pokemons p = new Pokemons(pokemonsStr);
         System.out.println(pokemonsStr);
         String isRunningStr = client.isRunning();
         System.out.println(isRunningStr);

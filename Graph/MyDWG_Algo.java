@@ -574,4 +574,10 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         }
         this.gr = g;
     }
+    public void loadjsonstring(String graphstr){
+        Gson gson = new Gson();
+        fromJsonToGraph graph = gson.fromJson(graphstr, fromJsonToGraph.class);
+        MyDWG gr = new MyDWG(graph);
+        this.init(gr);
+    }
 }
