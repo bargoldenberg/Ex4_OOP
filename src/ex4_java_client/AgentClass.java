@@ -2,24 +2,24 @@ package src.ex4_java_client;
 
 import Graph.Point3D;
 
-public class Agent {
+public class AgentClass {
     private int id;
     private double value;
     private int src;
     private int dest;
     private double speed;
-    private Point3D pos;
+    private String pos;
 
-    public Agent(){
+    public AgentClass(){
         this.id=0;
         this.value=0;
         this.src=0;
         this.dest=0;
         this.speed=0;
-        this.pos = new Point3D();
+        this.pos = "";
     }
 
-    public Agent(int id,double val,int src,int dest,double speed,Point3D pos){
+    public AgentClass(int id, double val, int src, int dest, double speed, String pos){
         this.id=id;
         this.value=val;
         this.src=src;
@@ -69,12 +69,9 @@ public class Agent {
     }
 
     public Point3D getPos() {
-        return pos;
+        String arr[] = this.pos.split(",");
+        Point3D position = new Point3D(Double.parseDouble(arr[0]),Double.parseDouble(arr[1]),Double.parseDouble(arr[2]));
+        return position;
     }
-
-    public void setPos(Point3D pos) {
-        this.pos = pos;
-    }
-
 
 }

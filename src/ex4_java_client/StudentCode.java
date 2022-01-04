@@ -25,10 +25,13 @@ public class StudentCode {
         g.loadjsonstring(graphStr);
         System.out.println(graphStr);
         client.addAgent("{\"id\":0}");
+        Agents a = new Agents();
         String agentsStr = client.getAgents();
+        a.loadjsonstring(agentsStr);
         System.out.println(agentsStr);
         String pokemonsStr = client.getPokemons();
-        Pokemons p = new Pokemons(pokemonsStr);
+        Pokemons p = new Pokemons();
+        p.loadjsonstring(pokemonsStr);
         System.out.println(pokemonsStr);
         String isRunningStr = client.isRunning();
         System.out.println(isRunningStr);

@@ -1,26 +1,22 @@
 package src.ex4_java_client;
 
 import Graph.Point3D;
-import com.google.gson.Gson;
 
-public class Pokemon {
+public class PokemonClass {
     private double value;
     private int type;
     private String pos;
-    private double speed;
 
-    public Pokemon(){
+    public PokemonClass(){
         this.value=0;
         this.type=0;
         this.pos="";
-        this.speed=0;
     }
 
-    public Pokemon(double val, int type, String pos, double speed){
+    public PokemonClass(double val, int type, String pos, double speed){
         this.value=val;
         this.type=type;
         this.pos=pos;
-        this.speed=speed;
     }
     public double getValue() {
         return value;
@@ -48,13 +44,7 @@ public class Pokemon {
         this.pos = pos;
     }
 
-    public double getSpeed() {
-        return speed;
-    }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
 
 
 
