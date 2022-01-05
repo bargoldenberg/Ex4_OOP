@@ -5,6 +5,8 @@ import Graph.MyDWG_Algo;
 import Graph.MyNode;
 import api.EdgeData;
 import api.NodeData;
+import src.ex4_java_client.Agents;
+import src.ex4_java_client.Pokemons;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,6 +42,8 @@ public class GUI extends JFrame implements ActionListener {
     JFrame connectedpop;
     MyDWG_Algo g1;
     MyDWG_Algo og;
+    Pokemons pokemons;
+    Agents agents;
     int source;
     int destination;
     NodeData center;
@@ -50,7 +54,7 @@ public class GUI extends JFrame implements ActionListener {
     int centercounter = 0;
 
 
-    public GUI(MyDWG gr) {
+    public GUI(MyDWG gr, Pokemons poke, Agents agen) {
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         JPanel p = new JPanel(new BorderLayout());//3,1
         functionPanel = new JPanel();
@@ -63,49 +67,12 @@ public class GUI extends JFrame implements ActionListener {
         int height = (int) size.height;
         this.setSize(width / 2, width / 2);
         this.setResizable(false);
-        src = new JTextField();
-        src.setPreferredSize(new Dimension(50, 25));
-        dst = new JTextField();
-        dst.setPreferredSize(new Dimension(50, 25));
-        node = new JTextField();
-        node.setPreferredSize(new Dimension(75, 25));
-        clear = new JButton("Clear");
-        save = new JButton("Save Graph");
-        centerb = new JButton("Center");
-        removenode = new JButton("Remove Node");
-        shortestpathb = new JButton("Shortest Path");
-        selectFile = new JButton("Load Graph");
-        Generateb = new JButton("Generate Graph");
-        TSPb = new JButton("TSP");
-        isConnected = new JButton("isConnected");
-        isConnected.addActionListener(this);
-        selectFile.addActionListener(this); // Adding select button to actionPreformed.
-        shortestpathb.addActionListener(this);
-        centerb.addActionListener(this);
-        removenode.addActionListener(this);
-        clear.addActionListener(this);
-        save.addActionListener(this);
-        TSPb.addActionListener(this);
-        Generateb.addActionListener(this);
-        this.setLayout(new BorderLayout(1,3));
-        this.add(functionPanel);
-        this.add(p, BorderLayout.WEST);
-        functionPanel.add(shortestpathb);
-        functionPanel.add(src,BorderLayout.EAST);
-        functionPanel.add(dst,BorderLayout.WEST);
-        functionPanel.add(removenode);
-        functionPanel.add(node);
-        functionPanel.add(centerb);
-        functionPanel.add(selectFile);
-        functionPanel.add(save);
-        functionPanel.add(clear);
-        functionPanel.add(TSPb);
-        functionPanel.add(isConnected);
-        functionPanel.add(Generateb);
-        this.add(new GraphP(gr)); //// FIX
+        GraphP gp = new GraphP(gr,poke,agen);
+        this.add(gp);
         this.setVisible(true);
         this.setTitle("Ex2 - UI");
         this.setResizable(false);
+
 
 
     }
@@ -118,9 +85,11 @@ public class GUI extends JFrame implements ActionListener {
         double scalefactor = 1;
         double scalefactor1 = 8;
 
-        public GraphP(MyDWG gr) {
+        public GraphP(MyDWG gr,Pokemons poke,Agents agen) {
             g1 = new MyDWG_Algo();
             og = new MyDWG_Algo();
+            pokemons =poke;
+            agents=agen;
 
             g1.init(gr);
             og.init(g1.copy());
@@ -284,6 +253,18 @@ public class GUI extends JFrame implements ActionListener {
 
                     }
                 }
+                for(int i=0;i<pokemons.GetPokeList().size();i++){
+                    g.setColor(new Color(255, 0, 0, 255));
+                    double x = (pokemons.GetPokeList().get(i).getPosition().x() - minx) * scalex * 0.97 + 30;
+                    double y = (pokemons.GetPokeList().get(i).getPosition().y() - miny) * scaley * 0.97 + 30;
+                    g.fillOval((int) x - 2, (int) y - 2, 20, 20);
+                }
+                for(int i=0;i<agents.GetAgentList().size();i++){
+                    g.setColor(new Color(0, 34, 255, 255));
+                    double x = (agents.GetAgentList().get(i).getPos().x() - minx) * scalex * 0.97 + 30;
+                    double y = (agents.GetAgentList().get(i).getPos().y() - miny) * scaley * 0.97 + 30;
+                    g.fillOval((int) x , (int) y , 20, 20);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -339,7 +320,7 @@ public class GUI extends JFrame implements ActionListener {
                 String jsonPath = fileChooser.getSelectedFile().getAbsolutePath();
                 this.g1.load(jsonPath);
                 try {
-                    runGUI((MyDWG) this.g1.getGraph());
+                    runGUI((MyDWG) this.g1.getGraph(),null,null);
                     setVisible(false); //you can't see me!
                     dispose();
 
@@ -475,7 +456,7 @@ public class GUI extends JFrame implements ActionListener {
             this.endpoint=null;
             this.setVisible(false);
             this.dispose();
-            new GUI((MyDWG) this.g1.getGraph());
+            new GUI((MyDWG) this.g1.getGraph(),pokemons,agents);
             popup1.setVisible(false);
             popup1.dispose();
 
@@ -495,17 +476,17 @@ public class GUI extends JFrame implements ActionListener {
         g2.draw(new Line2D.Double(x0, y0, x, y));
     }
 
-    public static void runGUI(MyDWG gr) {
-        new GUI(gr);
+    public static void runGUI(MyDWG gr, Pokemons p, Agents a) {
+        new GUI(gr,p,a);
     }
 
     public static void main(String[] args){
         if(args.length!=0){
             MyDWG_Algo alg = new MyDWG_Algo();
             alg.load(args[0]);
-            runGUI((MyDWG)alg.getGraph());
+            runGUI((MyDWG)alg.getGraph(),null,null);
         }else{
-            runGUI(null);
+            runGUI(null,null,null);
         }
     }
 }

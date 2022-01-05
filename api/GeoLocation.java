@@ -1,4 +1,4 @@
-package graphapi;
+package api;
 /**
  * This interface represents a geo location <x,y,z>, (aka Graph.Point3D data).
  *
