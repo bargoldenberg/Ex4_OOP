@@ -1,4 +1,4 @@
-package api;
+package graphapi;
 
 import java.io.FileNotFoundException;
 import java.util.List;

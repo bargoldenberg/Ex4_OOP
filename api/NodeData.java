@@ -1,4 +1,4 @@
-package api;
+package graphapi;
 
 /**
  * This interface represents the set of operations applicable on a

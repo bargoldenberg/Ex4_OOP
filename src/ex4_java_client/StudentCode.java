@@ -7,12 +7,13 @@ import java.util.Scanner;
 import Graph.MyDWG;
 import Graph.MyDWG_Algo;
 import Graph.fromJsonToGraph;
+import GraphGUI.GUI;
+import api.DirectedWeightedGraph;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
 public class StudentCode {
-
     public static void main(String[] args) {
         Client client = new Client();
         try {
@@ -20,6 +21,7 @@ public class StudentCode {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         String graphStr = client.getGraph();
         MyDWG_Algo g = new MyDWG_Algo();
         g.loadjsonstring(graphStr);
@@ -37,12 +39,12 @@ public class StudentCode {
         System.out.println(isRunningStr);
 
         client.start();
-
         while (client.isRunning().equals("true")) {
             client.move();
+            a.loadjsonstring(client.getAgents());
+            GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
             System.out.println(client.getAgents());
             System.out.println(client.timeToEnd());
-
             Scanner keyboard = new Scanner(System.in);
             System.out.println("enter the next dest: ");
             int next = keyboard.nextInt();
