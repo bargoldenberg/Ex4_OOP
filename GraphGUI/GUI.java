@@ -18,26 +18,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GUI extends JFrame {
-
-    JPanel pop;
-    JFrame popup;
-    JPanel pop1;
-    JFrame popup1;
-    JFrame connectedpop;
     MyDWG_Algo g1;
     MyDWG_Algo og;
     Pokemons pokemons;
     Agents agents;
-    int source;
-    int destination;
-    NodeData center;
-    NodeData startpoint;
-    NodeData endpoint;
-    ArrayList<NodeData> path;
-    ArrayList<NodeData> tsppath;
-    int centercounter = 0;
-
-
     public GUI(MyDWG gr, Pokemons poke, Agents agen) {
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         JPanel p = new JPanel(new BorderLayout());//3,1
@@ -48,12 +32,11 @@ public class GUI extends JFrame {
         int width = (int) size.width;
         int height = (int) size.height;
         this.setSize(width / 2, height / 2);
-        this.setResizable(false);
+        this.setResizable(true);
         GraphP gp = new GraphP(gr,poke,agen);
         this.add(gp);
         this.setVisible(true);
         this.setTitle("Ex2 - UI");
-        this.setResizable(false);
 
 
 
@@ -143,44 +126,20 @@ public class GUI extends JFrame {
                     String xs = "" + n.getLocation().x();
                     String ys = "" + n.getLocation().y();
                     String coord = "(" + xs + "," + ys + ")" + ", id:" + n.getKey();
-                    g.fillOval((int) x - 2, (int) y - 2, 20, 20);
+                    g.fillOval((int) x-10, (int) y-10, 20, 20);
                     g.setColor(new Color(0, 0, 0));
                     Font f = new Font("ariel", Font.BOLD, 16);
                     g.setFont(f);
                     g.drawString(n.getKey() + "", (int) x, (int) y - 10);
 
                 }
-                if (center != null) {
-                    double x = (center.getLocation().x() - minx) * scalex * 0.97 + 30;
-                    double y = (center.getLocation().y() - miny) * scaley * 0.97 + 30;
-                    g.setColor(new Color(255, 0, 243));
-                    g.fillOval((int) x - 2, (int) y - 2, 20, 20);
-                    g.setColor(new Color(0, 0, 0));
-                    g.drawString("CENTER", (int) x - 10, (int) y + 50);
-                }
-                if (startpoint != null) {
-                    double x = (startpoint.getLocation().x() - minx) * scalex * 0.97 + 30;
-                    double y = (startpoint.getLocation().y() - miny) * scaley * 0.97 + 30;
-                    g.setColor(new Color(25, 0, 255));
-                    g.fillOval((int) x - 2, (int) y - 2, 20, 20);
-                    g.setColor(new Color(0, 0, 0));
-                    g.drawString("START POINT", (int) x - 10, (int) y + 50);
-                }
-                if (endpoint != null) {
-                    double x = (endpoint.getLocation().x() - minx) * scalex * 0.97 + 30;
-                    double y = (endpoint.getLocation().y() - miny) * scaley * 0.97 + 30;
-                    g.setColor(new Color(25, 0, 255));
-                    g.fillOval((int) x - 2, (int) y - 2, 20, 20);
-                    g.setColor(new Color(0, 0, 0));
-                    g.drawString("END POINT", (int) x - 10, (int) y + 50);
-                }
                 Iterator<EdgeData> eiter = g1.getGraph().edgeIter();
                 while (eiter.hasNext()) {
                     EdgeData e = eiter.next();
-                    double srcx = (g1.getGraph().getNode(e.getSrc()).getLocation().x() - minx) * scalex + 30;
-                    double srcy = (g1.getGraph().getNode(e.getSrc()).getLocation().y() - miny) * scaley + 30;
-                    double destx = (g1.getGraph().getNode(e.getDest()).getLocation().x() - minx) * scalex + 30;
-                    double desty = (g1.getGraph().getNode(e.getDest()).getLocation().y() - miny) * scaley + 30;
+                    double srcx = (g1.getGraph().getNode(e.getSrc()).getLocation().x() - minx) * scalex*0.97 + 30;
+                    double srcy = (g1.getGraph().getNode(e.getSrc()).getLocation().y() - miny) * scaley*0.97 + 30;
+                    double destx = (g1.getGraph().getNode(e.getDest()).getLocation().x() - minx) * scalex*0.97 + 30;
+                    double desty = (g1.getGraph().getNode(e.getDest()).getLocation().y() - miny) * scaley*0.97 + 30;
                     g.setColor(new Color(0, 0, 0));
                     int x1 = (int) srcx;
                     int y1 = (int) srcy;
@@ -196,57 +155,18 @@ public class GUI extends JFrame {
                     x2 = (int) destx + (int) (scalex / scalefactor1);
                     y2 = (int) desty + (int) (scaley / scalefactor1);
                 }
-                if (path != null) {
-                    for (int i = 0; i < path.size() - 1; i++) {
-                        EdgeData curredge = g1.getGraph().getEdge(path.get(i).getKey(), path.get(i + 1).getKey());
-                        double srcx = (g1.getGraph().getNode(curredge.getSrc()).getLocation().x() - minx) * scalex + 30;
-                        double srcy = (g1.getGraph().getNode(curredge.getSrc()).getLocation().y() - miny) * scaley + 30;
-                        double destx = (g1.getGraph().getNode(curredge.getDest()).getLocation().x() - minx) * scalex + 30;
-                        double desty = (g1.getGraph().getNode(curredge.getDest()).getLocation().y() - miny) * scaley + 30;
-                        int x1 = (int) srcx;
-                        int y1 = (int) srcy;
-                        int x2 = (int) destx;
-                        int y2 = (int) desty;
-                        g.setColor(new Color(65, 255, 0));
-                        g2.draw(new Line2D.Double(x1, y1, x2, y2));
-                        g.setColor(new Color(0, 0, 0));
-                        ((Graphics2D) g).setStroke(new BasicStroke(5));
-                        g2.drawString(curredge.getWeight() + "", (x1 + x2) / 2, (y1 + y2) / 2);
-
-                    }
-                    g2.drawString("Shortest Path Distance: "+g1.shortestPathDist(source,destination),5,this.getWidth()-50);
-                }
-                if (tsppath != null) {
-                    for (int i = 0; i < tsppath.size() - 1; i++) {
-                        EdgeData curredge = g1.getGraph().getEdge(tsppath.get(i).getKey(), tsppath.get(i + 1).getKey());
-                        double srcx = (g1.getGraph().getNode(curredge.getSrc()).getLocation().x() - minx) * scalex + 30;
-                        double srcy = (g1.getGraph().getNode(curredge.getSrc()).getLocation().y() - miny) * scaley + 30;
-                        double destx = (g1.getGraph().getNode(curredge.getDest()).getLocation().x() - minx) * scalex + 30;
-                        double desty = (g1.getGraph().getNode(curredge.getDest()).getLocation().y() - miny) * scaley + 30;
-                        int x1 = (int) srcx;
-                        int y1 = (int) srcy;
-                        int x2 = (int) destx;
-                        int y2 = (int) desty;
-                        g.setColor(new Color(255, 0, 0));
-                        g2.draw(new Line2D.Double(x1, y1, x2, y2));
-                        g.setColor(new Color(0, 0, 0));
-                        ((Graphics2D) g).setStroke(new BasicStroke(5));
-                        //g2.drawString(curredge.getWeight() + "", (x1 + x2) / 2, (y1 + y2) / 2);
-
-                    }
-                }
                 for(int i=0;i<pokemons.GetPokeList().size();i++){
                     g.setColor(new Color(255, 0, 0, 255));
                     double x = (pokemons.GetPokeList().get(i).getPosition().x() - minx) * scalex * 0.97 + 30;
                     double y = (pokemons.GetPokeList().get(i).getPosition().y() - miny) * scaley * 0.97 + 30;
-                    g.fillOval((int) x - 2, (int) y - 2, 20, 20);
+                    g.fillOval((int) x - 10, (int) y - 10, 20, 20);
                     i+=20;
                 }
                 for(int i=0;i<agents.GetAgentList().size();i++){
                     g.setColor(new Color(0, 34, 255, 255));
                     double x = (agents.GetAgentList().get(i).getPos().x() - minx) * scalex * 0.97 + 30;
                     double y = (agents.GetAgentList().get(i).getPos().y() - miny) * scaley * 0.97 + 30;
-                    g.fillOval((int) x , (int) y , 20, 20);
+                    g.fillOval((int) x -10, (int) y-10 , 20, 20);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
