@@ -19,12 +19,14 @@ import com.google.gson.JsonObject;
 
 public class StudentCode {
     private static final double EPS = 0.0000001;
+
     public static int getNumOfAgents(String str){
         JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
         JsonObject server = jobj.get("GameServer").getAsJsonObject();
         int res = server.get("agents").getAsInt();
         return res;
     }
+
     public static EdgeData findEdge(Pokemon p, MyDWG g){
 
         try {
@@ -51,6 +53,7 @@ public class StudentCode {
         }
         return null;
     }
+
     public static void main(String[] args) {
         Client client = new Client();
         try {
