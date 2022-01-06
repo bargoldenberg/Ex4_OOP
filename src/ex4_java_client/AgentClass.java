@@ -9,6 +9,7 @@ public class AgentClass {
     private int dest;
     private double speed;
     private String pos;
+    private boolean state;
 
     public AgentClass(){
         this.id=0;
@@ -17,6 +18,7 @@ public class AgentClass {
         this.dest=0;
         this.speed=0;
         this.pos = "";
+        this.state = false;
     }
 
     public AgentClass(int id, double val, int src, int dest, double speed, String pos){
@@ -66,6 +68,13 @@ public class AgentClass {
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    public boolean isState(){
+        return this.state;
+    }
+    public void setState(boolean state){
+        this.state = state;
     }
 
     public Point3D getPos() {

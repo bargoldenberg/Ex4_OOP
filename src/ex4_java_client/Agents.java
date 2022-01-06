@@ -16,6 +16,11 @@ public class Agents {
         Agents agent = gson.fromJson(json, Agents.class);
         this.Agents=agent.Agents;
     }
+
+    public void sort(){
+        Agents.sort((a,b)-> (int) (a.getSpeed()-b.getSpeed()));
+    }
+
     public ArrayList<Agent> GetAgentList(){
         return this.Agents;
     }
