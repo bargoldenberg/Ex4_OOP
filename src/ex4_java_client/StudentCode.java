@@ -99,8 +99,9 @@ public class StudentCode {
             path.add(path.size(),g.getGraph().getNode(al.get(2)));
             while(!path.isEmpty()){
                 int next = path.remove(0).getKey();
+                int id = al.get(0);
                 while(a.GetAgentList().get(0).getPos().x()!=g.getGraph().getNode(next).getLocation().x()&&a.GetAgentList().get(0).getPos().y()!=g.getGraph().getNode(next).getLocation().y()){
-                    client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
+                    client.chooseNextEdge("{\"agent_id\":"+id+", \"next_node_id\": " + next + "}");
                     client.move();
                     a.loadjsonstring(client.getAgents());
                     p.loadjsonstring(client.getPokemons());
