@@ -12,4 +12,7 @@ public class Pokemon {
     public Point3D getPosition() {
         return Pokemon.getPos();
     }
+    public int getType() {
+        return Pokemon.getType();
+    }
 }

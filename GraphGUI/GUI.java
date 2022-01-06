@@ -258,6 +258,7 @@ public class GUI extends JFrame implements ActionListener {
                     double x = (pokemons.GetPokeList().get(i).getPosition().x() - minx) * scalex * 0.97 + 30;
                     double y = (pokemons.GetPokeList().get(i).getPosition().y() - miny) * scaley * 0.97 + 30;
                     g.fillOval((int) x - 2, (int) y - 2, 20, 20);
+                    i+=20;
                 }
                 for(int i=0;i<agents.GetAgentList().size();i++){
                     g.setColor(new Color(0, 34, 255, 255));
