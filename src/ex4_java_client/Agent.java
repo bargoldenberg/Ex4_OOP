@@ -2,10 +2,13 @@ package src.ex4_java_client;
 
 import Graph.MyDWG;
 import Graph.Point3D;
+import api.NodeData;
+
+import java.util.ArrayList;
 
 public class Agent {
     private AgentClass Agent;
-
+    public ArrayList<NodeData> path;
     public Agent() {
         this.Agent = null;
     }
@@ -20,9 +23,15 @@ public class Agent {
     public void setState(boolean state){
         this.Agent.setState(state);
     }
-
+    public int getSrc() {
+        return Agent.getSrc();
+    }
+    public void setDest(int d){ Agent.setDest(d);}
     public boolean isMoving(MyDWG graph){
-        if(graph.FindNodeThroughPos(getPos()) == -1){
+        if(Agent.getDest()==-1){
+            return false;
+        }
+        if(graph.FindNodeThroughPos((Point3D)graph.getNode(Agent.getDest()).getLocation()) != graph.FindNodeThroughPos(Agent.getPos())){
             return true;
         }
         else{

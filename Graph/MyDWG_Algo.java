@@ -608,9 +608,9 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
                 double delta = Math.abs(dist1-dist2);
                 boolean onedge = delta<EPS;
                 if(onedge){
-                    if((this.getGraph().getNode(e.getSrc()).getLocation().y()>this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==1){
+                    if((this.getGraph().getNode(e.getSrc()).getKey()>this.getGraph().getNode(e.getDest()).getKey())&&p.getType()==1){
                         return this.getGraph().getEdge(e.getDest(),e.getSrc());
-                    }else if((this.getGraph().getNode(e.getSrc()).getLocation().y()<this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
+                    }else if((this.getGraph().getNode(e.getSrc()).getKey()<this.getGraph().getNode(e.getDest()).getKey())&&p.getType()==-1){
                         return this.getGraph().getEdge(e.getDest(),e.getSrc());
                     }else {
                         return e;
@@ -633,7 +633,7 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
          */
         for(int i=0; i<p.GetPokeList().size();i++){
             MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
-            e.setTag(e.getTag()+1);
+            e.setTag(e.getTag()+(int)p.GetPokeList().get(i).getValue());
         }
     }
 
@@ -672,7 +672,7 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
             for(int i=0;i< list.size();i++){
                 if(weight[list.get(i)] < smallestDist){
                     smallestDist = weight[list.get(i)];
-                    indexOfSmallest = list.get(i);
+                    indexOfSmallest = i;
                 }
             }
             return list.get(indexOfSmallest);
@@ -732,7 +732,7 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         int i;
         a.sort();
         for(i=0; i<a.GetAgentList().size(); i++){
-            if(a.GetAgentList().get(i).isMoving(this.gr) == false){
+            if(a.GetAgentList().get(i).getSrc()==gr.FindNodeThroughPos(a.GetAgentList().get(i).getPos())){
                  path = khamzatChimaev(p,a.GetAgentList().get(i));
                  break;
             }

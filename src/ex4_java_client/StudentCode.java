@@ -5,23 +5,19 @@ package src.ex4_java_client; /**
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
+
 import Graph.MyDWG;
 import Graph.MyDWG_Algo;
-import Graph.MyEdge;
-import Graph.fromJsonToGraph;
 import GraphGUI.GUI;
-import api.DirectedWeightedGraph;
 import api.EdgeData;
 import api.NodeData;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 
 public class StudentCode {
     private static final double EPS = 0.0000001;
-    private static final int FPS = 60;
+    private static final int FPS = 10;
     public static int getNumOfAgents(String str){
         JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
         JsonObject server = jobj.get("GameServer").getAsJsonObject();
@@ -41,9 +37,9 @@ public class StudentCode {
                 double delta = Math.abs(dist1-dist2);
                 boolean onedge = delta<EPS;
                 if(onedge){
-                    if((g.getNode(e.getSrc()).getLocation().y()<g.getNode(e.getDest()).getLocation().y())&&p.getType()==1){
+                    if((g.getNode(e.getSrc()).getLocation().y()>g.getNode(e.getDest()).getLocation().y())&&p.getType()==1){
                         return g.getEdge(e.getDest(),e.getSrc());
-                    }else if((g.getNode(e.getSrc()).getLocation().y()>g.getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
+                    }else if((g.getNode(e.getSrc()).getLocation().y()<g.getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
                         return g.getEdge(e.getDest(),e.getSrc());
                     }else {
                         return e;
@@ -56,27 +52,28 @@ public class StudentCode {
         return null;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Client client = new Client();
         try {
             client.startConnection("127.0.0.1", 6666);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        double next_game_tick = System.currentTimeMillis();
         long startTime;
         long URDTimeMillis;
         long waitTime;
-        long totalTime=0;
-        int framecount =0;
-        int maxFramecount=30;
         String graphStr = client.getGraph();
         MyDWG_Algo g = new MyDWG_Algo();
         g.loadjsonstring(graphStr);
         int numofagents = getNumOfAgents(client.getInfo());
         System.out.println(graphStr);
-        for(int i =0;i<numofagents;i++) {
-            client.addAgent("{\"id\":"+i+"}");
+        try {
+            int center = g.center().getKey();
+            for(int i =0;i<numofagents;i++) {
+                client.addAgent("{\"id\":"+center+"}");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         System.out.println("the agents are"+client.getAgents());
         Agents a = new Agents();
@@ -94,32 +91,47 @@ public class StudentCode {
         client.start();
         long targetTime =1000/FPS;
         while (client.isRunning().equals("true")) {
+            g.loadjsonstring(client.getGraph());
             System.out.println(client.getAgents());
             System.out.println(client.timeToEnd());
             ArrayList<Integer> al = g.nextPos(p,a);
             ArrayList<NodeData> path =(ArrayList<NodeData>)g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(0).getPos()),al.get(1));
             path.add(path.size(),g.getGraph().getNode(al.get(2)));
-            while(!path.isEmpty()){
-                int next = path.remove(0).getKey();
-                while(a.GetAgentList().get(0).getPos().x()!=g.getGraph().getNode(next).getLocation().x()&&a.GetAgentList().get(0).getPos().y()!=g.getGraph().getNode(next).getLocation().y()) {
-                    startTime = System.nanoTime();
-                    client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
-                    client.move();
-                    a.loadjsonstring(client.getAgents());
-                    p.loadjsonstring(client.getPokemons());
-                    gui.updateScreen(p, a);
-                    URDTimeMillis = (System.nanoTime() - startTime)/1000000;
-                    waitTime=targetTime-URDTimeMillis;
-                    try{
-                        Thread.sleep(waitTime);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            path.remove(0);
+            a.GetAgentList().get(al.get(0)).path=path;
+            int next = path.get(0).getKey();
+            a.GetAgentList().get(al.get(0)).setDest(next);
+            for(int i=0;i<a.GetAgentList().size();i++) {
+                int id = al.get(0);
+                if(a.GetAgentList().get(i).path==null){
+                    continue;
+                }
+                if (!a.GetAgentList().get(i).path.isEmpty()) {
+                    next = path.remove(0).getKey();
+                    while (a.AreMoving((MyDWG) g.getGraph())) {
+//                        if(a.GetAgentList().get(i).path==null){
+//                            al=g.nextPos(p,a);
+//                            continue;
+//                        }
+                        startTime = System.nanoTime();
+                        client.chooseNextEdge("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
+                        client.move();
+                        a.loadjsonstring(client.getAgents());
+                        p.loadjsonstring(client.getPokemons());
+                        gui.updateScreen(p, a);
+                        URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
+                        waitTime = targetTime - URDTimeMillis;
+                        try {
+                            Thread.sleep(waitTime);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-
+                }
             }
-
         }
-    }
-}
+     }
+
+
 
