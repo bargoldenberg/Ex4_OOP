@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
 
 public class StudentCode {
     private static final double EPS = 0.0000001;
-
+    private static final int FPS = 60;
     public static int getNumOfAgents(String str){
         JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
         JsonObject server = jobj.get("GameServer").getAsJsonObject();
@@ -63,7 +63,13 @@ public class StudentCode {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        double next_game_tick = System.currentTimeMillis();
+        long startTime;
+        long URDTimeMillis;
+        long waitTime;
+        long totalTime=0;
+        int framecount =0;
+        int maxFramecount=30;
         String graphStr = client.getGraph();
         MyDWG_Algo g = new MyDWG_Algo();
         g.loadjsonstring(graphStr);
@@ -86,29 +92,34 @@ public class StudentCode {
         System.out.println(isRunningStr);
         GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
         client.start();
+        long targetTime =1000/FPS;
         while (client.isRunning().equals("true")) {
-
-
             System.out.println(client.getAgents());
             System.out.println(client.timeToEnd());
-//            Scanner keyboard = new Scanner(System.in);
-//            System.out.println("enter the next dest: ");
-//            int next = keyboard.nextInt();
             ArrayList<Integer> al = g.nextPos(p,a);
             ArrayList<NodeData> path =(ArrayList<NodeData>)g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(0).getPos()),al.get(1));
             path.add(path.size(),g.getGraph().getNode(al.get(2)));
             while(!path.isEmpty()){
                 int next = path.remove(0).getKey();
-                int id = al.get(0);
-                while(a.GetAgentList().get(0).getPos().x()!=g.getGraph().getNode(next).getLocation().x()&&a.GetAgentList().get(0).getPos().y()!=g.getGraph().getNode(next).getLocation().y()){
-                    client.chooseNextEdge("{\"agent_id\":"+id+", \"next_node_id\": " + next + "}");
+                while(a.GetAgentList().get(0).getPos().x()!=g.getGraph().getNode(next).getLocation().x()&&a.GetAgentList().get(0).getPos().y()!=g.getGraph().getNode(next).getLocation().y()) {
+                    startTime = System.nanoTime();
+                    client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
                     client.move();
                     a.loadjsonstring(client.getAgents());
                     p.loadjsonstring(client.getPokemons());
-                    gui.updateScreen(p,a);
+                    gui.updateScreen(p, a);
+                    URDTimeMillis = (System.nanoTime() - startTime)/1000000;
+                    waitTime=targetTime-URDTimeMillis;
+                    try{
+                        Thread.sleep(waitTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
+
         }
     }
-
 }
+
