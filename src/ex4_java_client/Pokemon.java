@@ -15,4 +15,7 @@ public class Pokemon {
     public int getType() {
         return Pokemon.getType();
     }
+    public double getValue() {
+        return Pokemon.getValue();
+    }
 }

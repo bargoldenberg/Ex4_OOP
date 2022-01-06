@@ -7,12 +7,13 @@ import Graph.MyNode;
 import Graph.MyDWG;
 import Graph.MyDWG_Algo;
 import Graph.*;
+import GraphGUI.GUI;
 import api.EdgeData;
 import api.GeoLocation;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
-import org.junit.Assert;
+
 import src.ex4_java_client.Agents;
 import src.ex4_java_client.Pokemon;
 import src.ex4_java_client.PokemonClass;
@@ -165,6 +166,8 @@ class MyDWG_AlgoTest {
         ag.loadjsonstring(agentStr);
         ArrayList<Integer> arr =  g.nextPos(pok,ag);
         System.out.println(arr);
+        GUI gui= new GUI(graph,pok,ag);
+
 //        assertEquals(g.findEdge(pok.GetPokeList().get(0)).getTag(),1);
 //        assertEquals(g.findEdge(pok.GetPokeList().get(1)).getTag(),1);
 

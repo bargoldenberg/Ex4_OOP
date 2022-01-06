@@ -1,9 +1,7 @@
 package Graph;
-import api.*;
 import api.EdgeData;
 import api.DirectedWeightedGraph;
 import api.DirectedWeightedGraphAlgorithms;
-import api.EdgeData;
 import api.NodeData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -624,17 +622,21 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         return null;
     }
 
+    /**
+     * sets amount of pokemons on an edge, using tag.
+     * @param p
+     */
     public void tagPokemonsOnEdges(Pokemons p){
         /**
          * For Tag all the edges with Pokemons on them.
          */
         for(int i=0; i<p.GetPokeList().size();i++){
             MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
-            e.setTag(1);
+            e.setTag(e.getTag()+1);
         }
     }
 
-    private int totalTags(List<NodeData> nodes){
+    private int totalPokemons(List<NodeData> nodes){
         int Tags = 0;
         for(int i=0; i<=nodes.size()-2; i++){
             Tags += this.getGraph().getEdge(nodes.get(i).getKey(),nodes.get(i+1).getKey()).getTag();
@@ -644,10 +646,16 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
 
     private int minimumCost(int[] tag,double []weight){
         int biggestTag = 0;
+        int bignum=-1;
         ArrayList<Integer> list = new ArrayList<Integer>();
-        for(int i=1; i<tag.length;i++){
+        for(int i=0;i<tag.length;i++){
+            if(tag[i]>bignum){
+                biggestTag=i;
+                bignum=tag[i];
+            }
+        }
+        for(int i=0; i<tag.length;i++){
             if(tag[i] >= tag[biggestTag]){
-                biggestTag = i;
                 list.add(i);
             }
         }
@@ -658,12 +666,12 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
             return biggestTag;
         }
         else{
-            double smallestDist = 100000;
+            double smallestDist = Integer.MAX_VALUE;
             int indexOfSmallest = -1;
             for(int i=0;i< list.size();i++){
                 if(weight[list.get(i)] < smallestDist){
                     smallestDist = weight[list.get(i)];
-                    indexOfSmallest = i;
+                    indexOfSmallest = list.get(i);
                 }
             }
             return list.get(indexOfSmallest);
@@ -677,27 +685,29 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         int source = -1,dest = -1;
         for(int i=0; i<p.GetPokeList().size();i++){
             MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
-            if(p.GetPokeList().get(i).getType() == 1){
-                source = e.getSrc();
-                dest = e.getDest();
-            }
-            if(p.GetPokeList().get(i).getType() == -1){
-                dest = e.getSrc();
-                source = e.getDest();
-            }
+//            if(p.GetPokeList().get(i).getType() == 1){
+//                source = e.getSrc();
+//                dest = e.getDest();
+//            }
+//            if(p.GetPokeList().get(i).getType() == -1){
+//                dest = e.getSrc();
+//                source = e.getDest();
+//            }
+            source = e.getSrc();
+            dest =e.getDest();
             double pathDst = shortestPathDist(getKeyOfPosition(a.GetAgentList().get(0).getPos()),source);
-            dist[i] = pathDst;
+            dist[i] = pathDst+e.getWeight();
             ArrayList<NodeData> path = (ArrayList<NodeData>) shortestPath(getKeyOfPosition(a.GetAgentList().get(0).getPos()),source);
             path.add(gr.V.get(dest));
-            int tagCount = totalTags(path);
+            int tagCount = totalPokemons(path);
             tagCaught[i] = tagCount;
         }
 
         int result = minimumCost(tagCaught,dist);
         ArrayList<Integer> ans = new ArrayList<Integer>();
         ans.add(0);
-        ans.add(result);
-        ans.add(dest);
+        ans.add(findEdge(p.GetPokeList().get(result)).getSrc());
+        ans.add(findEdge(p.GetPokeList().get(result)).getDest());
         return ans;
     }
 }
