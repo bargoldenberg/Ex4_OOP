@@ -82,12 +82,13 @@ public class StudentCode {
         System.out.println(pokemonsStr);
         String isRunningStr = client.isRunning();
         System.out.println(isRunningStr);
-
+        GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
         client.start();
         while (client.isRunning().equals("true")) {
             client.move();
             a.loadjsonstring(client.getAgents());
-            GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
+            p.loadjsonstring(client.getPokemons());
+            gui.updateScreen(p,a);
             System.out.println(client.getAgents());
             System.out.println(client.timeToEnd());
             Scanner keyboard = new Scanner(System.in);
