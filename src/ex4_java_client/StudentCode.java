@@ -3,6 +3,7 @@ package src.ex4_java_client; /**
  * A trivial example for starting the server and running all needed commands
  */
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 import Graph.MyDWG;
@@ -12,6 +13,7 @@ import Graph.fromJsonToGraph;
 import GraphGUI.GUI;
 import api.DirectedWeightedGraph;
 import api.EdgeData;
+import api.NodeData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -85,17 +87,26 @@ public class StudentCode {
         GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
         client.start();
         while (client.isRunning().equals("true")) {
-            client.move();
-            a.loadjsonstring(client.getAgents());
-            p.loadjsonstring(client.getPokemons());
-            gui.updateScreen(p,a);
+
+
             System.out.println(client.getAgents());
             System.out.println(client.timeToEnd());
-            Scanner keyboard = new Scanner(System.in);
-            System.out.println("enter the next dest: ");
-            int next = keyboard.nextInt();
-            client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
-
+//            Scanner keyboard = new Scanner(System.in);
+//            System.out.println("enter the next dest: ");
+//            int next = keyboard.nextInt();
+            ArrayList<Integer> al = g.nextPos(p,a);
+            ArrayList<NodeData> path =(ArrayList<NodeData>)g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(0).getPos()),al.get(1));
+            path.add(path.size(),g.getGraph().getNode(al.get(2)));
+            while(!path.isEmpty()){
+                int next = path.remove(0).getKey();
+                while(a.GetAgentList().get(0).getPos().x()!=g.getGraph().getNode(next).getLocation().x()&&a.GetAgentList().get(0).getPos().y()!=g.getGraph().getNode(next).getLocation().y()){
+                    client.chooseNextEdge("{\"agent_id\":0, \"next_node_id\": " + next + "}");
+                    client.move();
+                    a.loadjsonstring(client.getAgents());
+                    p.loadjsonstring(client.getPokemons());
+                    gui.updateScreen(p,a);
+                }
+            }
         }
     }
 

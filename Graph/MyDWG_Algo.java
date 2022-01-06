@@ -607,9 +607,9 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
                 double delta = Math.abs(dist1-dist2);
                 boolean onedge = delta<EPS;
                 if(onedge){
-                    if((this.getGraph().getNode(e.getSrc()).getLocation().y()<this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==1){
+                    if((this.getGraph().getNode(e.getSrc()).getLocation().y()>this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==1){
                         return this.getGraph().getEdge(e.getDest(),e.getSrc());
-                    }else if((this.getGraph().getNode(e.getSrc()).getLocation().y()>this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
+                    }else if((this.getGraph().getNode(e.getSrc()).getLocation().y()<this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
                         return this.getGraph().getEdge(e.getDest(),e.getSrc());
                     }else {
                         return e;

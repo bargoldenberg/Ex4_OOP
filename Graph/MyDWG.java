@@ -310,4 +310,14 @@ public class MyDWG implements DirectedWeightedGraph {
         edges=edges.substring(0,edges.length()-1);
         return "("+"{"+vertices+"}, {"+edges+"}"+")";
     }
+    public int FindNodeThroughPos(Point3D pos){
+        Iterator<NodeData> it = nodeIter();
+        while(it.hasNext()){
+            NodeData n = it.next();
+            if(n.getLocation().x()==pos.x()&&n.getLocation().y()==pos.y()){
+                return n.getKey();
+            }
+        }
+        return -1;
+    }
 }
