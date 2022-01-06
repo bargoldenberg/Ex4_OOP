@@ -7,6 +7,9 @@ import api.EdgeData;
 import api.NodeData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import src.ex4_java_client.Agents;
+import src.ex4_java_client.Pokemon;
+import src.ex4_java_client.Pokemons;
 
 import java.io.*;
 import java.util.*;
@@ -575,10 +578,59 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         }
         this.gr = g;
     }
+
     public void loadjsonstring(String graphstr){
         Gson gson = new Gson();
         fromJsonToGraph graph = gson.fromJson(graphstr, fromJsonToGraph.class);
         MyDWG gr = new MyDWG(graph);
         this.init(gr);
     }
+
+    public EdgeData findEdge(Pokemon p){
+        double EPS = 0.000001;
+        try {
+            Iterator<EdgeData> it= this.getGraph().edgeIter();
+            while(it.hasNext()){
+                EdgeData e = it.next();
+                double dist1 = this.getGraph().getNode(e.getSrc()).getLocation().distance(this.getGraph().getNode(e.getDest()).getLocation());
+                double dist2 =       (this.getGraph().getNode(e.getSrc()).getLocation().distance(p.getPosition())+
+                        p.getPosition().distance(this.getGraph().getNode(e.getDest()).getLocation()));
+                double delta = Math.abs(dist1-dist2);
+                boolean onedge = delta<EPS;
+                if(onedge){
+                    if((this.getGraph().getNode(e.getSrc()).getLocation().y()<this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==1){
+                        return this.getGraph().getEdge(e.getDest(),e.getSrc());
+                    }else if((this.getGraph().getNode(e.getSrc()).getLocation().y()>this.getGraph().getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
+                        return this.getGraph().getEdge(e.getDest(),e.getSrc());
+                    }else {
+                        return e;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private void tagPokemonsOnEdges(Pokemons p){
+        /**
+         * For Tag all the edges with Pokemons on them.
+         */
+        for(int i=0; i<p.GetPokeList().size();i++){
+            MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
+            e.setTag(1);
+        }
+    }
+
+    public ArrayList<Integer> nextPos(Pokemons p, Agents a){
+        ArrayList<Double> dist = new ArrayList<Double>();
+        ArrayList<Integer> tagCaught = new ArrayList<Integer>();
+        for(int i=0; i<p.GetPokeList().size();i++){
+
+        }
+        return null;
+    }
+
 }

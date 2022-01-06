@@ -1,0 +1,19 @@
+
+{
+  "Pokemons": [
+    {
+      "Pokemon": {
+        "value": 5.0,
+        "type": -1,
+        "pos": "4.0,1.0,0.0"
+      },
+      "Pokemon": {
+        "value": 5.0,
+        "type": -1,
+        "pos": "11.0,3.0,0.0"
+      }
+    }
+  ]
+}
+
+// "{"Pokemons": [{"Pokemon": {"value": 5.0,"type": 1,"pos": "4.0,1.0,0.0"},"Pokemon": {"value": 5.0,"type": -1,"pos": "11.0,3,0,0.0"}}]}"

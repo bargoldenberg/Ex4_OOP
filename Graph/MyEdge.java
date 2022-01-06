@@ -16,6 +16,7 @@ public class MyEdge implements EdgeData {
         this.Src=0;
         this.Dest=0;
         this.Weight=0;
+        this.Tag = 0;
         this.Info="";
         this.key=null;
     }
