@@ -17,24 +17,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class GUI extends JFrame implements ActionListener {
-    JPanel functionPanel;
-    JButton centerb;
-    JButton clear;
-    JButton save;
-    JButton shortestpathb;
-    JButton removenode;
-    JButton selectFile;
-    JButton TSPb;
-    JButton Generateb;
-    JButton enter;
-    JButton isConnected;
-    JTextField tsplist;
-    JTextField src;
-    JTextField dst;
-    JTextField node;
-    JTextField nodessize;
-    JButton enterNodes;
+public class GUI extends JFrame {
+
     JPanel pop;
     JFrame popup;
     JPanel pop1;
@@ -57,15 +41,13 @@ public class GUI extends JFrame implements ActionListener {
     public GUI(MyDWG gr, Pokemons poke, Agents agen) {
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         JPanel p = new JPanel(new BorderLayout());//3,1
-        functionPanel = new JPanel();
-        functionPanel.setBackground(Color.lightGray);
-        functionPanel.setBounds(size.width / 2 - 150, 0, 150, size.width / 2);
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocation((size.width/2-this.getSize().width)/2, (size.height/2-this.getSize().height)/3);
         this.setTitle("Ex2-Graph-GUI");
         int width = (int) size.width;
         int height = (int) size.height;
-        this.setSize(width / 2, width / 2);
+        this.setSize(width / 2, height / 2);
         this.setResizable(false);
         GraphP gp = new GraphP(gr,poke,agen);
         this.add(gp);
@@ -269,197 +251,6 @@ public class GUI extends JFrame implements ActionListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == centerb) {
-            try {
-                if (centercounter % 2 == 0) {
-                    NodeData a = g1.center();
-                    this.center = a;
-                    centercounter++;
-                    repaint();
-                } else {
-                    this.center = null;
-                    centercounter++;
-                    repaint();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else if (e.getSource() == shortestpathb) {
-            if (src.getText().length() == 0 || dst.getText().length() == 0) {
-                path = null;
-                repaint();
-            } else {
-                source = Integer.parseInt(src.getText());
-                destination = Integer.parseInt(dst.getText());
-                path = (ArrayList<NodeData>) g1.shortestPath(source, destination);
-                repaint();
-            }
-        } else if (e.getSource() == removenode) {
-            if (node.getText().length() == 0) {
-                g1.init(og.copy());
-                repaint();
-            } else {
-                int rmvnode = Integer.parseInt(node.getText());
-                this.g1.getGraph().removeNode(rmvnode);
-                if(center!=null&&center.getKey()==rmvnode){
-                    center=null;
-                    centercounter=0;
-                }
-                repaint();
-            }
-        } else if (e.getSource() == selectFile) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setCurrentDirectory(new File("."));
-            int response = fileChooser.showOpenDialog(null); // select file to Open.
-            if (response == JFileChooser.APPROVE_OPTION) {
-                String jsonPath = fileChooser.getSelectedFile().getAbsolutePath();
-                this.g1.load(jsonPath);
-                try {
-                    runGUI((MyDWG) this.g1.getGraph(),null,null);
-                    setVisible(false); //you can't see me!
-                    dispose();
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        } else if (e.getSource() == clear) {
-            this.center = null;
-            centercounter = 0;
-            path = null;
-            g1.init(og.copy());
-            tsppath=null;
-            this.startpoint=null;
-            this.endpoint=null;
-            repaint();
-        } else if (e.getSource() == save) {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setCurrentDirectory(new File("."));
-            int response = fileChooser.showSaveDialog(null); // select file to Open.
-            if (response == JFileChooser.APPROVE_OPTION) {
-                String jsonPath = fileChooser.getSelectedFile().getAbsolutePath();
-                this.g1.save(jsonPath);
-            }
-        } else if (e.getSource()==TSPb) {
-            popup = new JFrame("TSP");
-
-            pop = new JPanel();
-            popup.setContentPane(pop);
-            pop.setBackground(Color.lightGray);
-            popup.setBackground(Color.lightGray);
-            popup.setLocationRelativeTo(null);
-            //popup.pack();
-            Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-            popup.setSize((int)d.getWidth()/3,(int)d.getHeight()/5);
-            popup.setResizable(false);
-            popup.setVisible(true);
-            tsplist = new JTextField();
-            enter = new JButton("Enter Cities");
-            enter.setPreferredSize(new Dimension(400,40));
-            JLabel inst = new JLabel("enter cities in this format 1,2,3,4");
-            popup.add(enter);
-            popup.add(inst);
-            enter.addActionListener(this);
-            popup.setResizable(true);
-            tsplist.setPreferredSize(new Dimension(150, 30));
-            popup.add(tsplist);
-        }else if(e.getSource()==enter){
-            String cities = tsplist.getText();
-            popup.setVisible(false);
-            popup.dispose();
-            String[]list = cities.split(",");
-            tsppath = new ArrayList<>();
-
-            ArrayList<NodeData> Cities = new ArrayList<>();
-            for(int i=0;i<list.length;i++){
-                Cities.add(this.g1.getGraph().getNode(Integer.parseInt(list[i])));
-            }
-            Cities=(ArrayList)this.g1.tsp(Cities);
-
-            for(int i =0;i<Cities.size()-1;i++){
-                ArrayList<NodeData> tmp =(ArrayList)this.g1.shortestPath(Cities.get(i).getKey(),Cities.get(i+1).getKey());
-                if(i!=Cities.size()-2){
-                    tmp.remove(tmp.get(tmp.size()-1));
-                }
-                for(int k=0;k<tmp.size();k++){
-                    tsppath.add(tmp.get(k));
-                }
-                startpoint = tsppath.get(0);
-                endpoint = tsppath.get(tsppath.size()-1);
-            }
-            repaint();
-
-        }else if(e.getSource()==isConnected){
-            connectedpop = new JFrame();
-            Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-            connectedpop.setSize((int)d.getWidth()/3,(int)d.getHeight()/10);
-            connectedpop.setResizable(false);
-            try {
-                if(this.g1.isConnected()){
-                    JLabel message = new JLabel("This graph is strongly connected");
-                    JPanel a = new JPanel();
-                    message.setFont(new Font("Verdana", Font.BOLD, 25));
-                    connectedpop.setContentPane(a);
-                    message.setSize(400,400);
-                    connectedpop.setLocationRelativeTo(null);
-                    a.add(message);
-                }else{
-                    JLabel message = new JLabel("This graph is not strongly connected");
-                    JPanel a = new JPanel();
-                    connectedpop.setContentPane(a);
-                    message.setFont(new Font("Verdana", Font.BOLD, 25));
-                    message.setSize(400,400);
-                    connectedpop.setLocationRelativeTo(null);
-                    a.add(message);
-                }
-                connectedpop.setVisible(true);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-
-        }else if(e.getSource()==Generateb){
-            popup1 = new JFrame("Generate Graph");
-            pop1 = new JPanel();
-            popup1.setContentPane(pop1);
-            pop1.setBackground(Color.lightGray);
-            popup1.setBackground(Color.lightGray);
-            popup1.setLocationRelativeTo(null);
-            //popup.pack();
-            Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-            popup1.setSize((int)d.getWidth()/3,(int)d.getHeight()/5);
-            popup1.setResizable(false);
-            popup1.setVisible(true);
-            nodessize = new JTextField();
-            enterNodes = new JButton("Generate");
-            enterNodes.setPreferredSize(new Dimension(400,40));
-            JLabel inst = new JLabel("Enter Vertex Size");
-            popup1.add(enterNodes);
-            popup1.add(inst);
-            enterNodes.addActionListener(this);
-            popup1.setResizable(true);
-            nodessize.setPreferredSize(new Dimension(150, 30));
-            popup1.add(nodessize);
-
-        }else if(e.getSource()==enterNodes){
-            this.center = null;
-            centercounter = 0;
-            path = null;
-            this.g1.generateGraph(Integer.parseInt(nodessize.getText()),1);
-            tsppath=null;
-            this.startpoint=null;
-            this.endpoint=null;
-            this.setVisible(false);
-            this.dispose();
-            new GUI((MyDWG) this.g1.getGraph(),pokemons,agents);
-            popup1.setVisible(false);
-            popup1.dispose();
 
         }
     }
