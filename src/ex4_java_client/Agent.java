@@ -30,7 +30,7 @@ public class Agent {
 
     public boolean isMoving(MyDWG graph){
         if(Agent.getDest()==-1){
-            return false;
+            return true;
         }
         if(graph.FindNodeThroughPos((Point3D)graph.getNode(Agent.getDest()).getLocation()) != graph.FindNodeThroughPos(Agent.getPos())){
             return true;

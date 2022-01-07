@@ -4,10 +4,12 @@ package src.ex4_java_client; /**
  */
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import Graph.MyDWG;
 import Graph.MyDWG_Algo;
+import Graph.Point3D;
 import GraphGUI.GUI;
 import api.EdgeData;
 import api.NodeData;
@@ -18,6 +20,7 @@ import com.google.gson.JsonObject;
 public class StudentCode {
     private static final double EPS = 0.0000001;
     private static final int FPS = 10;
+    private static int FLAG=0;
     public static int getNumOfAgents(String str){
         JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
         JsonObject server = jobj.get("GameServer").getAsJsonObject();
@@ -90,32 +93,61 @@ public class StudentCode {
         System.out.println(isRunningStr);
         GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
         client.start();
+        HashMap<Integer,ArrayList<NodeData>> allPaths = new HashMap<>();
         long targetTime =1000/FPS;
         while (client.isRunning().equals("true")) {
             g.loadjsonstring(client.getGraph());
-            System.out.println(client.getAgents());
-            System.out.println(client.timeToEnd());
             ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p,a);
             System.out.println("all paths = "+ allNextPaths);
-            for(int k=0;k<allNextPaths.size();k++){
-                ArrayList<Integer> al = allNextPaths.get(k);
-                System.out.println("path for "+k+": "+al);
-                ArrayList<NodeData> path =(ArrayList<NodeData>)g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(0).getPos()),al.get(1));
-                path.add(path.size(),g.getGraph().getNode(al.get(2)));
-                path.remove(0);
-                a.GetAgentList().get(al.get(0)).path=path;
-                int next = path.get(0).getKey();
-                a.GetAgentList().get(al.get(0)).setDest(next);
-                for(int i=0;i<a.GetAgentList().size();i++) {
-                    int id = al.get(0);
-                    if(a.GetAgentList().get(i).path==null){
-                        continue;
-                    }
-                    if (!a.GetAgentList().get(i).path.isEmpty()) {
-                        next = path.remove(0).getKey();
-                        while (a.AreMoving((MyDWG) g.getGraph())) {
+            FLAG=0;
+            while (FLAG==0) {
+                if(FLAG==1){
+                    break;
+                }
+                int next=-1;
+                ArrayList<NodeData> path = new ArrayList<NodeData>();
+                //System.out.println(allPaths);
+                for (int k = 0; k < allNextPaths.size(); k++) {
+                    ArrayList<Integer> al = allNextPaths.get(k);
+                    System.out.println("path for " + k + ": " + al);
+                    if(al != null&&al.size()!=0) {
+                        System.out.println(al.toString());
+                        if(!allPaths.containsKey(al.get(0))) {
+                            if(a.GetAgentList().get(al.get(0)).getSrc()==al.get(2)){
+                                FLAG=1;
+                                break;
+                            }
+                            path = (ArrayList<NodeData>) g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos((Point3D) g.getGraph().getNode(a.GetAgentList().get(al.get(0)).getSrc()).getLocation()), al.get(1));
+                            allPaths.put(al.get(0),path);
+                            System.out.println("hi");
+
+                        }else {
+                            if (a.GetAgentList().get(al.get(0)).getSrc() != al.get(2) || allPaths.get(al.get(0)).size() > 1) {
+                                path = (ArrayList<NodeData>) g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos((Point3D) g.getGraph().getNode(a.GetAgentList().get(al.get(0)).getSrc()).getLocation()), al.get(1));
+                            }else{
+                                FLAG=1;
+                                System.out.println("hello");
+                                System.out.println(allPaths);
+                                break;
+                            }
+                            path.add(path.size(), g.getGraph().getNode(al.get(2)));
+                            System.out.println(path);
+                            //a.GetAgentList().get(al.get(0)).path = path;
+                            allPaths.put(al.get(0),path);
+                        }
+
+                        int id = al.get(0);
+                        if (allPaths.get(al.get(0)).size()>1) {
+                            if (a.GetAgentList().get(al.get(0)).getSrc() == ((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(al.get(0)).getPos())) {
+                                allPaths.get(id).remove(0).getKey();
+                                next = allPaths.get(id).get(0).getKey();
+                            } else {
+                                next = allPaths.get(id).remove(0).getKey();
+                            }
                             startTime = System.nanoTime();
                             client.chooseNextEdge("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
+                            System.out.println("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
+                            System.out.println("agent src ="+a.GetAgentList().get(al.get(0)).getSrc());
                             client.move();
                             a.loadjsonstring(client.getAgents());
                             p.loadjsonstring(client.getPokemons());
@@ -128,8 +160,10 @@ public class StudentCode {
                                 e.printStackTrace();
                             }
                         }
+
                     }
                 }
+
             }
 
         }
