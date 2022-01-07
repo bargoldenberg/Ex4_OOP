@@ -122,6 +122,10 @@ public class StudentCode {
                             System.out.println("hi");
 
                         }else {
+                            if(allPaths.get(al.get(0)).isEmpty()){
+                                FLAG=1;
+                                break;
+                            }
                             if (a.GetAgentList().get(al.get(0)).getSrc() != al.get(2) || allPaths.get(al.get(0)).size() > 1) {
                                 path = (ArrayList<NodeData>) g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos((Point3D) g.getGraph().getNode(a.GetAgentList().get(al.get(0)).getSrc()).getLocation()), al.get(1));
                             }else{
