@@ -24,8 +24,8 @@ public class Pokemon {
     public boolean isCaught(){
         return this.Caught;
     }
-
     public void FellAndCaught(){
         this.Caught = true;
     }
+
 }

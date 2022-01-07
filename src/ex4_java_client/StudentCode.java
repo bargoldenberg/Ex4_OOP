@@ -52,6 +52,7 @@ public class StudentCode {
         return null;
     }
 
+
     public static void main(String[] args) throws Exception {
         Client client = new Client();
         try {
@@ -94,44 +95,46 @@ public class StudentCode {
             g.loadjsonstring(client.getGraph());
             System.out.println(client.getAgents());
             System.out.println(client.timeToEnd());
-            ArrayList<Integer> al = g.nextPos(p,a);
-            ArrayList<NodeData> path =(ArrayList<NodeData>)g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(0).getPos()),al.get(1));
-            path.add(path.size(),g.getGraph().getNode(al.get(2)));
-            path.remove(0);
-            a.GetAgentList().get(al.get(0)).path=path;
-            int next = path.get(0).getKey();
-            a.GetAgentList().get(al.get(0)).setDest(next);
-            for(int i=0;i<a.GetAgentList().size();i++) {
-                int id = al.get(0);
-                if(a.GetAgentList().get(i).path==null){
-                    continue;
-                }
-                if (!a.GetAgentList().get(i).path.isEmpty()) {
-                    next = path.remove(0).getKey();
-                    while (a.AreMoving((MyDWG) g.getGraph())) {
-//                        if(a.GetAgentList().get(i).path==null){
-//                            al=g.nextPos(p,a);
-//                            continue;
-//                        }
-                        startTime = System.nanoTime();
-                        client.chooseNextEdge("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
-                        client.move();
-                        a.loadjsonstring(client.getAgents());
-                        p.loadjsonstring(client.getPokemons());
-                        gui.updateScreen(p, a);
-                        URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
-                        waitTime = targetTime - URDTimeMillis;
-                        try {
-                            Thread.sleep(waitTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+            ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p,a);
+            System.out.println("all paths = "+ allNextPaths);
+            for(int k=0;k<allNextPaths.size();k++){
+                ArrayList<Integer> al = allNextPaths.get(k);
+                System.out.println("path for "+k+": "+al);
+                ArrayList<NodeData> path =(ArrayList<NodeData>)g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos(a.GetAgentList().get(0).getPos()),al.get(1));
+                path.add(path.size(),g.getGraph().getNode(al.get(2)));
+                path.remove(0);
+                a.GetAgentList().get(al.get(0)).path=path;
+                int next = path.get(0).getKey();
+                a.GetAgentList().get(al.get(0)).setDest(next);
+                for(int i=0;i<a.GetAgentList().size();i++) {
+                    int id = al.get(0);
+                    if(a.GetAgentList().get(i).path==null){
+                        continue;
+                    }
+                    if (!a.GetAgentList().get(i).path.isEmpty()) {
+                        next = path.remove(0).getKey();
+                        while (a.AreMoving((MyDWG) g.getGraph())) {
+                            startTime = System.nanoTime();
+                            client.chooseNextEdge("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
+                            client.move();
+                            a.loadjsonstring(client.getAgents());
+                            p.loadjsonstring(client.getPokemons());
+                            gui.updateScreen(p, a);
+                            URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
+                            waitTime = targetTime - URDTimeMillis;
+                            try {
+                                Thread.sleep(waitTime);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
-                }
             }
+
         }
-     }
+    }
+}
 
 
 

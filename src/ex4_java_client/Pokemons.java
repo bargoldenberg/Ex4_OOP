@@ -6,11 +6,12 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 public class Pokemons {
-
     private ArrayList<Pokemon> Pokemons;
+
     public Pokemons(){
         this.Pokemons = new ArrayList<Pokemon>();
     }
+
 
     public void loadjsonstring(String json){
         Gson gson = new Gson();

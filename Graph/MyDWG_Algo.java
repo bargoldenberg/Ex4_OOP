@@ -703,45 +703,64 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
 //        return ans;
 //    }
 
+    public void catchThemAll(Pokemons p,ArrayList<Integer> headNodes,int sourceNode){
+        List<NodeData> nodes =  shortestPath(headNodes.get(0),headNodes.get(1));
+        for(int i=0;i< p.GetPokeList().size(); i++){
+            MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
+            for(int j=0; j < nodes.size()-1;j++){
+                if(e != null){
+                    if((e.getSrc() == nodes.get(j).getKey() )&& (e.getDest() == nodes.get(j+1).getKey())){
+                        p.GetPokeList().get(i).FellAndCaught();
+                    }
+                }
+            }
+        }
+
+    }
+
     public ArrayList<Integer> khamzatChimaev(Pokemons p, Agent a){
         tagPokemonsOnEdges(p); // assuming that we will get each time more pokemons - we tag their edges.
         double[] dist = new double[p.GetPokeList().size()];
         int [] tagCaught = new int[p.GetPokeList().size()];
         int source = -1,dest = -1;
         for(int i=0; i<p.GetPokeList().size();i++){
-            MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
-            source = e.getSrc();
-            dest =e.getDest();
-            double pathDst = shortestPathDist(getKeyOfPosition(a.getPos()),source);
-            dist[i] = pathDst+e.getWeight();
-            ArrayList<NodeData> path = (ArrayList<NodeData>) shortestPath(getKeyOfPosition(a.getPos()),source);
-            path.add(gr.V.get(dest));
-            int tagCount = totalPokemons(path);
-            tagCaught[i] = tagCount;
+            if (p.GetPokeList().get(i).isCaught() == false) {
+                MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
+                source = e.getSrc();
+                dest =e.getDest();
+                double pathDst = shortestPathDist(getKeyOfPosition(a.getPos()),source);
+                dist[i] = pathDst; //+e.getWeight()
+                ArrayList<NodeData> path = (ArrayList<NodeData>) shortestPath(getKeyOfPosition(a.getPos()),source);
+                path.add(gr.V.get(dest));
+                int tagCount = totalPokemons(path);
+                tagCaught[i] = tagCount;
+            }
         }
         int result = minimumCost(tagCaught,dist);
         ArrayList<Integer> ans = new ArrayList<Integer>();
-//        ans.add(0);
         ans.add(findEdge(p.GetPokeList().get(result)).getSrc());
         ans.add(findEdge(p.GetPokeList().get(result)).getDest());
+        catchThemAll(p,ans,a.getSrc());
         return ans;
     }
 
-    public ArrayList<Integer> nextPos(Pokemons p, Agents a){
-        ArrayList<Integer> path = null;
+    public ArrayList<ArrayList<Integer>> nextPos(Pokemons p, Agents a){
+        ArrayList<ArrayList<Integer>> listOfPaths = new ArrayList<ArrayList<Integer>>();
         int i;
         a.sort();
         for(i=0; i<a.GetAgentList().size(); i++){
-            if(a.GetAgentList().get(i).getSrc()==gr.FindNodeThroughPos(a.GetAgentList().get(i).getPos())){
-                 path = khamzatChimaev(p,a.GetAgentList().get(i));
-                 break;
+            ArrayList<Integer> path = new ArrayList<Integer>();
+            ArrayList<Integer> finelPath = new ArrayList<Integer>();
+            if(a.GetAgentList().get(i).getSrc()==gr.FindNodeThroughPos(a.GetAgentList().get(i).getPos())) { //&& a.GetAgentList().get(i).isMoving(this.gr) == false)
+                System.out.println("Path for "+ i);
+                path = khamzatChimaev(p,a.GetAgentList().get(i));
+                finelPath.add(i);
+                finelPath.add(path.get(0));
+                finelPath.add(path.get(1));
             }
+            listOfPaths.add(finelPath);
         }
-        ArrayList<Integer> finelPath = new ArrayList<Integer>();
-        finelPath.add(i);
-        finelPath.add(path.get(0));
-        finelPath.add(path.get(1));
-        return finelPath;
+        return listOfPaths;
     }
 
     private void sortBySpeed(int[] arr,Agents a ){
