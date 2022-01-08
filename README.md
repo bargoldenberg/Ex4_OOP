@@ -1,8 +1,6 @@
 # Ex4_OOP
 Welcome to Ex4_OOP - the Last task in OOP course in Ariel University.
 
-This documentation is the main source of documentation for this task, and we encouraging you o read it first.
-
 This project is about Graph theory, Pokemons and more!.
 here we continue Ex2_OOP, we use the graph (MyDWG) and the graph algorithms (MyDWG_Algo) in Ex2.
 every time we want to start the game we need to turn on server (Here How To Run) that sends us graph, pokemons location on the graph and agents.
