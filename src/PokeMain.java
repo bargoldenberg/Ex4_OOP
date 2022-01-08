@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
-public class StudentCode {
+public class PokeMain {
     private static final double EPS = 0.0000001;
     private static final int FPS = 10;
     private static int FLAG=0;
