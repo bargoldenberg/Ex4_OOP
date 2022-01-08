@@ -648,6 +648,9 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
             if((nodes.get(i).getKey()==nodes.get(i+1).getKey())){
                 continue;
             }
+            if(this.getGraph().getEdge(nodes.get(i).getKey(),nodes.get(i+1).getKey())==null){
+                return Tags;
+            }
             Tags += this.getGraph().getEdge(nodes.get(i).getKey(),nodes.get(i+1).getKey()).getTag();
         }
         return Tags;

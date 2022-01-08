@@ -102,7 +102,9 @@ public class PokeMain {
         String isRunningStr = client.isRunning();
         System.out.println(isRunningStr);
         GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
+
         client.start();
+        //client.login("209894286");
         HashMap<Integer,ArrayList<NodeData>> allPaths = new HashMap<>();
         long targetTime =1000/FPS;
         int FLAG2=1;
