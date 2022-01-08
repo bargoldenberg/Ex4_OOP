@@ -1,6 +1,5 @@
-package src.ex4_java_client;
+package src;
 
-import Graph.Point3D;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

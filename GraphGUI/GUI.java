@@ -5,8 +5,8 @@ import Graph.MyDWG_Algo;
 import Graph.MyNode;
 import api.EdgeData;
 import api.NodeData;
-import src.ex4_java_client.Agents;
-import src.ex4_java_client.Pokemons;
+import src.Agents;
+import src.Pokemons;
 
 import javax.swing.*;
 import java.awt.*;

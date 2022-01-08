@@ -1,7 +1,6 @@
-package src.ex4_java_client;
+package src;
 
 import Graph.MyDWG;
-import api.NodeData;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

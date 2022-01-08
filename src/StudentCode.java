@@ -1,4 +1,4 @@
-package src.ex4_java_client; /**
+package src; /**
  * @author AchiyaZigi
  * A trivial example for starting the server and running all needed commands
  */
@@ -171,6 +171,8 @@ public class StudentCode {
                             gui.updateScreen(p, a,getscore(client.getInfo()));
                             if(gui.getFLAG()==1){
                                 client.stop();
+                                gui.setVisible(false);
+                                gui.dispose();
                             }
                             URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
                             waitTime = Math.abs(targetTime - URDTimeMillis);

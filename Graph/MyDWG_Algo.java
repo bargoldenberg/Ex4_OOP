@@ -5,10 +5,10 @@ import api.DirectedWeightedGraphAlgorithms;
 import api.NodeData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import src.ex4_java_client.Agent;
-import src.ex4_java_client.Agents;
-import src.ex4_java_client.Pokemon;
-import src.ex4_java_client.Pokemons;
+import src.Agent;
+import src.Agents;
+import src.Pokemon;
+import src.Pokemons;
 
 import java.io.*;
 import java.util.*;
