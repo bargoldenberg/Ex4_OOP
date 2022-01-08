@@ -96,11 +96,13 @@ public class StudentCode {
         HashMap<Integer,ArrayList<NodeData>> allPaths = new HashMap<>();
         long targetTime =1000/FPS;
         while (client.isRunning().equals("true")) {
-            g.loadjsonstring(client.getGraph());
+
             ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p,a);
+            g.loadjsonstring(client.getGraph());
             System.out.println("all paths = "+ allNextPaths);
             FLAG=0;
             while (FLAG==0) {
+
                 if(FLAG==1){
                     break;
                 }
@@ -130,13 +132,11 @@ public class StudentCode {
                                 path = (ArrayList<NodeData>) g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos((Point3D) g.getGraph().getNode(a.GetAgentList().get(al.get(0)).getSrc()).getLocation()), al.get(1));
                             }else{
                                 FLAG=1;
-                                System.out.println("hello");
                                 System.out.println(allPaths);
                                 break;
                             }
                             path.add(path.size(), g.getGraph().getNode(al.get(2)));
                             System.out.println(path);
-                            //a.GetAgentList().get(al.get(0)).path = path;
                             allPaths.put(al.get(0),path);
                         }
 
@@ -153,11 +153,13 @@ public class StudentCode {
                             System.out.println("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
                             System.out.println("agent src ="+a.GetAgentList().get(al.get(0)).getSrc());
                             client.move();
+//                            g.loadjsonstring(client.getGraph());
                             a.loadjsonstring(client.getAgents());
                             p.loadjsonstring(client.getPokemons());
                             gui.updateScreen(p, a);
                             URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
                             waitTime = Math.abs(targetTime - URDTimeMillis);
+
                             try {
                                 Thread.sleep(waitTime);
                             } catch (InterruptedException e) {
