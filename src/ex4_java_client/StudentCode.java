@@ -27,7 +27,12 @@ public class StudentCode {
         int res = server.get("agents").getAsInt();
         return res;
     }
-
+    public static int getscore(String str){
+        JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
+        JsonObject server = jobj.get("GameServer").getAsJsonObject();
+        int res = server.get("grade").getAsInt();
+        return res;
+    }
     public static EdgeData findEdge(Pokemon p, MyDWG g){
 
         try {
@@ -162,8 +167,11 @@ public class StudentCode {
                             g.loadjsonstring(client.getGraph());
                             a.loadjsonstring(client.getAgents());
                             p.loadjsonstring(client.getPokemons());
-                            //allNextPaths = g.nextPos(p,a);
-                            gui.updateScreen(p, a);
+                            System.out.println(client.getInfo());
+                            gui.updateScreen(p, a,getscore(client.getInfo()));
+                            if(gui.getFLAG()==1){
+                                client.stop();
+                            }
                             URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
                             waitTime = Math.abs(targetTime - URDTimeMillis);
                             try {
