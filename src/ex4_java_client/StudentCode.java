@@ -157,7 +157,7 @@ public class StudentCode {
                             p.loadjsonstring(client.getPokemons());
                             gui.updateScreen(p, a);
                             URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
-                            waitTime = targetTime - URDTimeMillis;
+                            waitTime = Math.abs(targetTime - URDTimeMillis);
                             try {
                                 Thread.sleep(waitTime);
                             } catch (InterruptedException e) {

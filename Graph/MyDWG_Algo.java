@@ -637,9 +637,17 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         }
     }
 
+    /**
+     * Returns the total pokemon values in a specific path.
+     * @param nodes
+     * @return
+     */
     private int totalPokemons(List<NodeData> nodes){
         int Tags = 0;
-        for(int i=0; i<=nodes.size()-2; i++){
+        for(int i=0; i<nodes.size()-1; i++){
+            if((nodes.get(i).getKey()==nodes.get(i+1).getKey())){
+                continue;
+            }
             Tags += this.getGraph().getEdge(nodes.get(i).getKey(),nodes.get(i+1).getKey()).getTag();
         }
         return Tags;
@@ -704,7 +712,8 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
 //    }
 
     public void catchThemAll(Pokemons p,ArrayList<Integer> headNodes,int sourceNode){
-        List<NodeData> nodes =  shortestPath(headNodes.get(0),headNodes.get(1));
+        List<NodeData> nodes =  shortestPath(sourceNode,headNodes.get(0));
+        nodes.add(this.gr.getNode(headNodes.get(1)));
         for(int i=0;i< p.GetPokeList().size(); i++){
             MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
             for(int j=0; j < nodes.size()-1;j++){
@@ -724,13 +733,13 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         int [] tagCaught = new int[p.GetPokeList().size()];
         int source = -1,dest = -1;
         for(int i=0; i<p.GetPokeList().size();i++){
-            if (p.GetPokeList().get(i).isCaught() == false) {
+            if (!p.GetPokeList().get(i).isCaught()) {
                 MyEdge e = (MyEdge) findEdge(p.GetPokeList().get(i));
                 source = e.getSrc();
                 dest =e.getDest();
-                double pathDst = shortestPathDist(getKeyOfPosition(a.getPos()),source);
-                dist[i] = pathDst; //+e.getWeight()
-                ArrayList<NodeData> path = (ArrayList<NodeData>) shortestPath(getKeyOfPosition(a.getPos()),source);
+                double pathDst = shortestPathDist(a.getSrc(),source);
+                dist[i] = pathDst+e.getWeight();
+                ArrayList<NodeData> path = (ArrayList<NodeData>) shortestPath(a.getSrc(),source);
                 path.add(gr.V.get(dest));
                 int tagCount = totalPokemons(path);
                 tagCaught[i] = tagCount;
@@ -751,7 +760,7 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         for(i=0; i<a.GetAgentList().size(); i++){
             ArrayList<Integer> path = new ArrayList<Integer>();
             ArrayList<Integer> finelPath = new ArrayList<Integer>();
-            if(a.GetAgentList().get(i).getSrc()==gr.FindNodeThroughPos(a.GetAgentList().get(i).getPos())) { //&& a.GetAgentList().get(i).isMoving(this.gr) == false)
+            if(true){//a.GetAgentList().get(i).getSrc()==gr.FindNodeThroughPos(a.GetAgentList().get(i).getPos())) { //&& a.GetAgentList().get(i).isMoving(this.gr) == false)
                 System.out.println("Path for "+ i);
                 path = khamzatChimaev(p,a.GetAgentList().get(i));
                 finelPath.add(i);

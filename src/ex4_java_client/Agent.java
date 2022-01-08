@@ -27,7 +27,9 @@ public class Agent {
         return Agent.getSrc();
     }
     public void setDest(int d){ Agent.setDest(d);}
-
+    public int getDest(){
+        return Agent.getDest();
+    }
     public boolean isMoving(MyDWG graph){
         if(Agent.getDest()==-1){
             return true;
