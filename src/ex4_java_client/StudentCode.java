@@ -74,7 +74,12 @@ public class StudentCode {
         try {
             int center = g.center().getKey();
             for(int i =0;i<numofagents;i++) {
-                client.addAgent("{\"id\":"+center+"}");
+                if(i==0) {
+                    client.addAgent("{\"id\":" + center + "}");
+
+                }else{
+                    client.addAgent("{\"id\":" + i + "}");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,10 +100,11 @@ public class StudentCode {
         client.start();
         HashMap<Integer,ArrayList<NodeData>> allPaths = new HashMap<>();
         long targetTime =1000/FPS;
+        int FLAG2=1;
         while (client.isRunning().equals("true")) {
-
-            ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p,a);
             g.loadjsonstring(client.getGraph());
+            ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p, a);
+           // p.loadjsonstring(client.getPokemons());
             System.out.println("all paths = "+ allNextPaths);
             FLAG=0;
             while (FLAG==0) {
@@ -153,13 +159,13 @@ public class StudentCode {
                             System.out.println("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
                             System.out.println("agent src ="+a.GetAgentList().get(al.get(0)).getSrc());
                             client.move();
-//                            g.loadjsonstring(client.getGraph());
+                            g.loadjsonstring(client.getGraph());
                             a.loadjsonstring(client.getAgents());
                             p.loadjsonstring(client.getPokemons());
+                            //allNextPaths = g.nextPos(p,a);
                             gui.updateScreen(p, a);
                             URDTimeMillis = (System.nanoTime() - startTime) / 1000000;
                             waitTime = Math.abs(targetTime - URDTimeMillis);
-
                             try {
                                 Thread.sleep(waitTime);
                             } catch (InterruptedException e) {
