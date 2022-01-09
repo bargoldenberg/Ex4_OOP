@@ -21,46 +21,38 @@ public class PokeMain {
     private static final double EPS = 0.0000001;
     private static final int FPS = 10;
     private static int FLAG=0;
+
+    /**
+     * returns the number of agents in this case.
+     * @param str
+     * @return
+     */
     public static int getNumOfAgents(String str){
         JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
         JsonObject server = jobj.get("GameServer").getAsJsonObject();
         int res = server.get("agents").getAsInt();
         return res;
     }
+
+    /**
+     * returns the current score.
+     * @param str
+     * @return
+     */
     public static int getscore(String str){
         JsonObject jobj = new Gson().fromJson(str, JsonObject.class);
         JsonObject server = jobj.get("GameServer").getAsJsonObject();
         int res = server.get("grade").getAsInt();
         return res;
     }
-    public static EdgeData findEdge(Pokemon p, MyDWG g){
 
-        try {
-            Iterator<EdgeData> it= g.edgeIter();
-            while(it.hasNext()){
-                EdgeData e = it.next();
-                double dist1 = g.getNode(e.getSrc()).getLocation().distance(g.getNode(e.getDest()).getLocation());
-                double dist2 =       (g.getNode(e.getSrc()).getLocation().distance(p.getPosition())+
-                        p.getPosition().distance(g.getNode(e.getDest()).getLocation()));
-                double delta = Math.abs(dist1-dist2);
-                boolean onedge = delta<EPS;
-                if(onedge){
-                    if((g.getNode(e.getSrc()).getLocation().y()>g.getNode(e.getDest()).getLocation().y())&&p.getType()==1){
-                        return g.getEdge(e.getDest(),e.getSrc());
-                    }else if((g.getNode(e.getSrc()).getLocation().y()<g.getNode(e.getDest()).getLocation().y())&&p.getType()==-1){
-                        return g.getEdge(e.getDest(),e.getSrc());
-                    }else {
-                        return e;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
+    /**
+     * main function responsible for creating a gui object and running it, it consists of a "gameloop"
+     * running at 10 FPS which calls algorithms from the MyDWG_Algo class, these algorithms give the next location for
+     * the agents at every given moment.
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         Client client = new Client();
         try {
@@ -75,7 +67,6 @@ public class PokeMain {
         MyDWG_Algo g = new MyDWG_Algo();
         g.loadjsonstring(graphStr);
         int numofagents = getNumOfAgents(client.getInfo());
-        System.out.println(graphStr);
         try {
             int center = g.center().getKey();
             for(int i =0;i<numofagents;i++) {
@@ -89,20 +80,14 @@ public class PokeMain {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("the agents are"+client.getAgents());
         Agents a = new Agents();
         String agentsStr = client.getAgents();
         a.loadjsonstring(agentsStr);
-        System.out.println(agentsStr);
         String pokemonsStr = client.getPokemons();
         Pokemons p = new Pokemons();
         p.loadjsonstring(pokemonsStr);
-        System.out.println(findEdge(p.GetPokeList().get(0),(MyDWG)g.getGraph()));
-        System.out.println(pokemonsStr);
         String isRunningStr = client.isRunning();
-        System.out.println(isRunningStr);
         GUI gui =new GUI((MyDWG)g.getGraph(),p,a);
-
         client.start();
         //client.login("209894286");
         HashMap<Integer,ArrayList<NodeData>> allPaths = new HashMap<>();
@@ -111,8 +96,6 @@ public class PokeMain {
         while (client.isRunning().equals("true")) {
             g.loadjsonstring(client.getGraph());
             ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p, a);
-           // p.loadjsonstring(client.getPokemons());
-            System.out.println("all paths = "+ allNextPaths);
             FLAG=0;
             while (FLAG==0) {
 
@@ -121,12 +104,9 @@ public class PokeMain {
                 }
                 int next=-1;
                 ArrayList<NodeData> path = new ArrayList<NodeData>();
-                //System.out.println(allPaths);
                 for (int k = 0; k < allNextPaths.size(); k++) {
                     ArrayList<Integer> al = allNextPaths.get(k);
-                    System.out.println("path for " + k + ": " + al);
                     if(al != null&&al.size()!=0) {
-                        System.out.println(al.toString());
                         if(!allPaths.containsKey(al.get(0))) {
                             if(a.GetAgentList().get(al.get(0)).getSrc()==al.get(2)){
                                 FLAG=1;
@@ -134,7 +114,6 @@ public class PokeMain {
                             }
                             path = (ArrayList<NodeData>) g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos((Point3D) g.getGraph().getNode(a.GetAgentList().get(al.get(0)).getSrc()).getLocation()), al.get(1));
                             allPaths.put(al.get(0),path);
-                            System.out.println("hi");
 
                         }else {
                             if(allPaths.get(al.get(0)).isEmpty()){
@@ -145,11 +124,9 @@ public class PokeMain {
                                 path = (ArrayList<NodeData>) g.shortestPath(((MyDWG) g.getGraph()).FindNodeThroughPos((Point3D) g.getGraph().getNode(a.GetAgentList().get(al.get(0)).getSrc()).getLocation()), al.get(1));
                             }else{
                                 FLAG=1;
-                                System.out.println(allPaths);
                                 break;
                             }
                             path.add(path.size(), g.getGraph().getNode(al.get(2)));
-                            System.out.println(path);
                             allPaths.put(al.get(0),path);
                         }
 
@@ -163,14 +140,11 @@ public class PokeMain {
                             }
                             startTime = System.nanoTime();
                             client.chooseNextEdge("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
-                            System.out.println("{\"agent_id\":" + id + ", \"next_node_id\": " + next + "}");
-                            System.out.println("agent src ="+a.GetAgentList().get(al.get(0)).getSrc());
                             client.move();
                             g.loadjsonstring(client.getGraph());
                             a.loadjsonstring(client.getAgents());
                             p.loadjsonstring(client.getPokemons());
-                            System.out.println(client.getInfo());
-                            gui.updateScreen(p, a,getscore(client.getInfo()));
+                            gui.updateScreen(p, a,getscore(client.getInfo()),Double.parseDouble(client.timeToEnd()));
                             if(gui.getFLAG()==1){
                                 client.stop();
                                 gui.setVisible(false);

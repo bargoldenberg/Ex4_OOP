@@ -21,6 +21,7 @@ public class GUI extends JFrame {
     Pokemons pokemons;
     Agents agents;
     double score =0;
+    double time = 0;
     int FLAG=0;
     public GUI(MyDWG gr, Pokemons poke, Agents agen) {
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -43,10 +44,11 @@ public class GUI extends JFrame {
     public int getFLAG(){
         return FLAG;
     }
-    public void updateScreen(Pokemons poke,Agents agents,double score){
+    public void updateScreen(Pokemons poke, Agents agents, double score, double time){
         this.pokemons=poke;
         this.agents=agents;
         this.score=score;
+        this.time=time;
         repaint();
     }
     public class GraphP extends JPanel implements ActionListener {
@@ -127,6 +129,7 @@ public class GUI extends JFrame {
             Font f = new Font("ariel", Font.BOLD, 20);
             g.setFont(f);
             g.drawString("Score: "+score , (int) 5, (int) 20);
+            g.drawString("Time to end: "+time,5,45);
             MyNode prev = null;
             try {
                 Graphics2D g2 = (Graphics2D) g;

@@ -745,8 +745,7 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
             ArrayList<Integer> path = new ArrayList<Integer>();
             ArrayList<Integer> finalPath = new ArrayList<Integer>();
             if (a.GetAgentList().get(i).isMoving(this.gr)) {
-                { //&& a.GetAgentList().get(i).isMoving(this.gr) == false)
-                    System.out.println("Path for " + i);
+                {
                     path = BestPath(p, a.GetAgentList().get(i));
                     finalPath.add(i);
                     finalPath.add(path.get(0));
