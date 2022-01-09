@@ -8,4 +8,4 @@ The Goal of the game: write the best algorithm for the agents to catch them all 
 you can read more details in this repository's [wiki page](https://github.com/bargoldenberg/Ex4_OOP/wiki)
 
 ## Game UI:
-![pokemongui](https://user-images.githubusercontent.com/89586016/148658484-9bb47f08-27b0-4e46-a608-124e20a9dcd6.gif)
+![pokemongui1](https://user-images.githubusercontent.com/89586016/148693621-ba30b026-2e3c-4092-b586-f1e8dd235a6d.gif)
