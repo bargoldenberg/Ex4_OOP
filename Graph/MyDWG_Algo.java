@@ -656,6 +656,14 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         return Tags;
     }
 
+
+    /**
+     * this function gets array of tags and array of weights (each index in both array represent single path, for example - path i has tag[i] pokemons in it
+     * and weight's weight[i]). Eventually, it returns the best path with maximum tags and the lesser weight on the way
+     * @param tag
+     * @param weight
+     * @return
+     */
     private int minimumCost(int[] tag,double []weight){
         int biggestTag = 0;
         int bignum=-1;
@@ -691,6 +699,13 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
     }
 
 
+    /**
+     * This function gets list of Pokemons, ArrayList of nodes and source node (as Int).
+     * The function is go through the path and re tag the Caught argument in each Pokemon on the way to True (indicate he is about to be catch).
+     * @param p - list of all the Pokemons
+     * @param headNodes - all the nodes (int) in this path.
+     * @param sourceNode - the first node of this path
+     */
     public void catchThemAll(Pokemons p,ArrayList<Integer> headNodes,int sourceNode){
         List<NodeData> nodes =  shortestPath(sourceNode,headNodes.get(0));
         nodes.add(this.gr.getNode(headNodes.get(1)));
@@ -707,6 +722,15 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
 
     }
 
+    /**
+     * This function's input is set of pokemons, and one agent. and return ArrayList of Integers that represent the nodes of the best path for the agent.
+     * For each pokemon in the set, it first check if the pokemon is about to be cough by another agent (each pokemon have a 'Caught' value that indicate it's state).
+     * If the Pokemon is 'not caught' it's checks the shortest path to the agent using shortestPathMap function that returns the total path of the shortest path.
+     * Then it check how many Pokemons will be catch in this path - the path with the most pokemons in its way will be return.
+     * @param p - List of Pokemon
+     * @param a - List of Pokemons
+     * @return the best path to the agent
+     */
     public ArrayList<Integer> BestPath(Pokemons p, Agent a){
         tagPokemonsOnEdges(p); // assuming that we will get each time more pokemons - we tag their edges.
         double[] dist = new double[p.GetPokeList().size()];
@@ -737,6 +761,15 @@ public class MyDWG_Algo implements DirectedWeightedGraphAlgorithms {
         return ans;
     }
 
+    /**
+     * this function returns ArrayList of ArrayLists (yes it is weird).
+     * for each Agent it check if he is moving, if it does - do nothing, if it doesn't it will send him to BestPath and add
+     * the path (ArrayList) to the allPaths list (ArrayList as well).
+     * In the end it returns the best path for each Agent that isn't moving.
+     * @param p - list of Pokemons
+     * @param a - list of Agents
+     * @return ArrayList of ArrayLists --> each ArrayList contain nodes for specific agent.
+     */
     public ArrayList<ArrayList<Integer>> nextPos(Pokemons p, Agents a) {
         ArrayList<ArrayList<Integer>> listOfPaths = new ArrayList<ArrayList<Integer>>();
         int i;
