@@ -54,6 +54,9 @@ public class PokeMain {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+        /**
+         * connect to server
+         */
         Client client = new Client();
         try {
             client.startConnection("127.0.0.1", 6666);
@@ -67,6 +70,9 @@ public class PokeMain {
         MyDWG_Algo g = new MyDWG_Algo();
         g.loadjsonstring(graphStr);
         int numofagents = getNumOfAgents(client.getInfo());
+        /**
+         * position agents
+         */
         try {
             int center = g.center().getKey();
             for(int i =0;i<numofagents;i++) {
@@ -93,6 +99,9 @@ public class PokeMain {
         HashMap<Integer,ArrayList<NodeData>> allPaths = new HashMap<>();
         long targetTime =1000/FPS;
         int FLAG2=1;
+        /**
+         * Game Loop
+         */
         while (client.isRunning().equals("true")) {
             g.loadjsonstring(client.getGraph());
             ArrayList<ArrayList<Integer>> allNextPaths = g.nextPos(p, a);
